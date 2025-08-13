@@ -44,7 +44,12 @@
         .background-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.5s ease-out; transform: scale(1.25); opacity: 0.15; }
         .section.active .background-image { transform: scale(1); opacity: 0.25; }
         .vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,1) 100%); z-index: 2; }
-        .content-wrapper { position: relative; z-index: 10; width: 100%; max-width: 1000px; padding: 2rem; }
+        .content-wrapper { position: relative; z-index: 10; width: 100%; max-width: 1000px; padding: 2rem 1rem; }
+        @media (min-width: 640px) {
+            .content-wrapper {
+                padding: 2rem;
+            }
+        }
         .content-wrapper::-webkit-scrollbar { width: 6px; }
         .content-wrapper::-webkit-scrollbar-track { background: transparent; }
         .content-wrapper::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
@@ -63,8 +68,8 @@
         details[open] { border-color: rgba(167, 139, 250, 0.7); box-shadow: 0 0 20px rgba(167, 139, 250, 0.1); }
         summary { list-style: none; cursor: pointer; padding: 1rem 1.5rem; font-weight: 700; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; }
         summary::-webkit-details-marker { display: none; }
-        summary::after { content: '+'; font-size: 2rem; color: #a78bfa; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
-        details[open] summary::after { transform: rotate(225deg); color: #c4b5fd; }
+        summary::after { content: '+'; font-size: 2rem; color: #a78bfa; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), content 0.4s; }
+        details[open] summary::after { content: '−'; transform: none; color: #c4b5fd; }
         .details-content { padding: 0 1.5rem 1.5rem 1.5rem; line-height: 1.7; color: #b0b0b0; }
         details[open] .details-content { animation: fadeInUp 0.5s ease-in-out; }
         details .details-content.collapsing { animation: fadeOutDown 0.3s ease-in-out forwards; }
@@ -130,40 +135,6 @@
         .section.active .reveal-2 { transition-delay: 0.4s; }
         .section.active .reveal-3 { transition-delay: 0.6s; }
         .section.active .reveal-4 { transition-delay: 0.8s; }
-
-        /* Gemini Modal Styles */
-        #gemini-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            z-index: 2000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
-        }
-        #gemini-modal-overlay.visible {
-            opacity: 1; pointer-events: auto;
-        }
-        #gemini-modal {
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            width: 90%; max-width: 600px;
-            padding: 2rem;
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-        #gemini-modal-overlay.visible #gemini-modal {
-            transform: scale(1);
-        }
-        .loader {
-            width: 48px; height: 48px;
-            border: 5px solid #FFF;
-            border-bottom-color: #a78bfa;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: spin 1s linear infinite;
-        }
     </style>
 </head>
 <body>
@@ -199,22 +170,6 @@
         </button>
     </div>
 </nav>
-
-<!-- Gemini Modal -->
-<div id="gemini-modal-overlay">
-    <div id="gemini-modal">
-        <div class="flex justify-between items-center mb-4">
-            <h2 id="gemini-modal-title" class="text-2xl font-bold">Deconstructing...</h2>
-            <button id="gemini-modal-close" class="text-2xl text-gray-400 hover:text-white">&times;</button>
-        </div>
-        <div id="gemini-modal-content" class="text-gray-300">
-            <div class="flex justify-center items-center h-32">
-                 <div class="loader"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <div class="container">
 
@@ -352,13 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailsElements = document.querySelectorAll('details');
     let isScrolling = false;
     
-    // Gemini Modal Elements
-    const modalOverlay = document.getElementById('gemini-modal-overlay');
-    const modalTitle = document.getElementById('gemini-modal-title');
-    const modalContent = document.getElementById('gemini-modal-content');
-    const modalCloseBtn = document.getElementById('gemini-modal-close');
-    const loaderHTML = `<div class="flex justify-center items-center h-32"><div class="loader"></div></div>`;
-
     // --- Navigation Click Logic ---
     navButtons.forEach(button => {
         button.addEventListener('click', (e) => {
@@ -439,78 +387,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: false });
     });
 
-    // --- Details Collapse Animation ---
+    // --- Details Collapse/Expand Animation ---
     detailsElements.forEach(details => {
-        details.addEventListener('toggle', () => {
-            const content = details.querySelector('.details-content');
-            if (!details.open && content) {
-                content.classList.add('collapsing');
-                content.addEventListener('animationend', () => {
-                    content.classList.remove('collapsing');
-                }, { once: true });
-            }
-        });
-    });
+        const summary = details.querySelector('summary');
+        const content = details.querySelector('.details-content');
 
-    // --- Gemini API Feature ---
-    async function getGeminiAnalysis(songTitle, narrativeContext) {
-        modalTitle.textContent = `Deconstructing "${songTitle}"`;
-        modalContent.innerHTML = loaderHTML;
-        modalOverlay.classList.add('visible');
-
-        const prompt = `As an expert in music and literary analysis, deconstruct the main themes of The Weeknd's song "${songTitle}". The song's role in the album's narrative is: "${narrativeContext}". Focus your analysis on symbolism, recurring motifs in the Trilogy (like birds, drugs, parties), and the underlying emotional state of the protagonist. Provide a concise, insightful paragraph.`;
-        
-        try {
-            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // API key will be injected by the environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+        if (summary && content) {
+            summary.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                if (details.open) {
+                    content.classList.add('collapsing');
+                    content.addEventListener('animationend', () => {
+                        details.removeAttribute('open');
+                        content.classList.remove('collapsing');
+                    }, { once: true });
+                } else {
+                    details.setAttribute('open', '');
+                }
             });
-
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
-            }
-
-            const result = await response.json();
-            
-            if (result.candidates && result.candidates[0].content.parts[0].text) {
-                const text = result.candidates[0].content.parts[0].text;
-                modalContent.innerHTML = `<p>${text.replace(/\n/g, '<br>')}</p>`;
-            } else {
-                throw new Error("Invalid response structure from API.");
-            }
-
-        } catch (error) {
-            console.error("Error fetching Gemini analysis:", error);
-            modalContent.innerHTML = `<p class="text-red-400">Sorry, something went wrong while analyzing the song. Please try again later.</p>`;
         }
-    }
-
-    function addGeminiButtons() {
-        const detailsContents = document.querySelectorAll('.details-content');
-        detailsContents.forEach(content => {
-            const songTitle = content.closest('details').querySelector('summary').textContent;
-            const narrativeContext = content.querySelector('p').textContent;
-
-            const button = document.createElement('button');
-            button.innerHTML = `✨ Deconstruct Lyric`;
-            button.className = 'mt-4 bg-purple-500/20 text-purple-300 font-bold py-2 px-4 rounded-lg hover:bg-purple-500/40 transition-colors duration-300';
-            button.onclick = () => getGeminiAnalysis(songTitle, narrativeContext);
-            
-            content.appendChild(button);
-        });
-    }
-    
-    modalCloseBtn.addEventListener('click', () => {
-        modalOverlay.classList.remove('visible');
     });
-    
-    addGeminiButtons();
 });
 </script>
 
