@@ -54,15 +54,15 @@
         .content-wrapper::-webkit-scrollbar-track { background: transparent; }
         .content-wrapper::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
         .content-wrapper::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
-        .album-art { border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85); transition: transform 0.5s ease, box-shadow 0.5s ease; border: 1px solid rgba(255, 255, 255, 0.1); margin: 1.5rem auto 0 auto; }
-        .album-art:hover { transform: scale(1.03) translateY(-5px); box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 1); }
+        .album-art { border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); margin: 1.5rem auto 0 auto; }
         
         /* Title Styles */
         .fancy-title { font-weight: 900; color: transparent; background-clip: text; -webkit-background-clip: text; }
         .title-main { background-image: linear-gradient(to right, #808080, #ef4444, #f59e0b, #808080); animation: text-shimmer 6s linear infinite; background-size: 300% auto;}
         .title-hob { background-image: linear-gradient(to right, #b3b3b3, #666666, #b3b3b3); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
-        .title-thu { background-image: linear-gradient(to right, #ef4444, #b91c1c, #ef4444); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
-        .title-eos { background-image: linear-gradient(to right, #facc15, #f59e0b, #facc15); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
+        /* Swapped Styles */
+        .title-thu { background-image: linear-gradient(to right, #facc15, #f59e0b, #facc15); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
+        .title-eos { background-image: linear-gradient(to right, #ef4444, #b91c1c, #ef4444); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
 
         details { background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; margin-bottom: 1rem; transition: all 0.4s ease; text-align: left; }
         details[open] { border-color: rgba(167, 139, 250, 0.7); box-shadow: 0 0 20px rgba(167, 139, 250, 0.1); }
@@ -125,8 +125,29 @@
             transform: scale(1.05) translateY(-10px) perspective(1000px) rotateX(5deg);
         }
         .album-choice-link:nth-child(1):hover .album-art { box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.3); }
-        .album-choice-link:nth-child(2):hover .album-art { box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.3); }
-        .album-choice-link:nth-child(3):hover .album-art { box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.3); }
+        /* These hover colors now match the swapped themes */
+        .album-choice-link:nth-child(2):hover .album-art { box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.3); }
+        .album-choice-link:nth-child(3):hover .album-art { box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.3); }
+
+        /* Hover/Touch feedback for album slides */
+        .section .album-art {
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, filter 0.4s ease;
+        }
+        .section .album-art:hover, .section .album-art:active {
+            transform: scale(1.08) translateY(-8px) perspective(1200px) rotateX(3deg);
+            filter: brightness(1.05);
+        }
+        #hob .album-art:hover, #hob .album-art:active {
+            box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.4);
+        }
+        #thursday .album-art:hover, #thursday .album-art:active {
+            /* Now yellow theme */
+            box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.4);
+        }
+        #eos .album-art:hover, #eos .album-art:active {
+            /* Now red theme */
+            box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.4);
+        }
 
 
         .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
@@ -151,15 +172,8 @@
             <div class="color-block" style="background-color: #999999;"></div>
             <div class="color-block" style="background-color: #b3b3b3;"></div>
         </button>
+        <!-- Swapped Nav Bar -->
         <button class="nav-bar" id="nav-bar-thu" data-target="#thursday">
-            <div class="color-block" style="background-color: #7f1d1d;"></div>
-            <div class="color-block" style="background-color: #991b1b;"></div>
-            <div class="color-block" style="background-color: #b91c1c;"></div>
-            <div class="color-block" style="background-color: #dc2626;"></div>
-            <div class="color-block" style="background-color: #ef4444;"></div>
-            <div class="color-block" style="background-color: #f87171;"></div>
-        </button>
-        <button class="nav-bar" id="nav-bar-eos" data-target="#eos">
             <div class="color-block" style="background-color: #facc15;"></div>
             <div class="color-block" style="background-color: #f9a825;"></div>
             <div class="color-block" style="background-color: #f59e0b;"></div>
@@ -167,6 +181,15 @@
             <div class="color-block" style="background-color: #b45309;"></div>
             <div class="color-block" style="background-color: #92400e;"></div>
             <div class="color-block" style="background-color: #78350f;"></div>
+        </button>
+        <!-- Swapped Nav Bar -->
+        <button class="nav-bar" id="nav-bar-eos" data-target="#eos">
+            <div class="color-block" style="background-color: #7f1d1d;"></div>
+            <div class="color-block" style="background-color: #991b1b;"></div>
+            <div class="color-block" style="background-color: #b91c1c;"></div>
+            <div class="color-block" style="background-color: #dc2626;"></div>
+            <div class="color-block" style="background-color: #ef4444;"></div>
+            <div class="color-block" style="background-color: #f87171;"></div>
         </button>
     </div>
 </nav>
@@ -194,11 +217,12 @@
                         <a href="#hob" class="album-choice-link">
                             <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
+                        <!-- Swapped Album Art to match destination slides -->
                         <a href="#thursday" class="album-choice-link">
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png" alt="Thursday Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png" alt="Echoes of Silence Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                         <a href="#eos" class="album-choice-link">
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png" alt="Echoes of Silence Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png" alt="Thursday Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                     </div>
                 </div>
@@ -246,10 +270,11 @@
              <div class="text-center">
                 <h1 class="text-5xl md:text-7xl fancy-title title-thu reveal reveal-1">Thursday</h1>
                 <p class="text-lg text-gray-300 mt-4 max-w-xl mx-auto reveal reveal-2">The party's thrill wears off, replaced by routine and manipulation. Relationships are transactional, and he grapples with newfound fame. A specific girl becomes the focus of his manipulative tendencies.</p>
-                <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png"
-                     alt="Thursday Album Art"
+                <!-- Swapped Cover Art -->
+                <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png"
+                     alt="Echoes of Silence Album Art"
                      class="w-40 h-40 md:w-48 md:h-48 album-art reveal reveal-3"
-                     onerror="this.onerror=null;this.src='https://placehold.co/256x256/111111/555555?text=Thursday';">
+                     onerror="this.onerror=null;this.src='https://placehold.co/256x256/111111/555555?text=EOS';">
             </div>
             <div class="song-list mt-8 reveal reveal-4">
                 <details><summary>Lonely Star</summary><div class="details-content"><h3 class="analysis-heading">Narrative Role</h3><p>This track opens the second act by establishing the protagonist's new reality. He's no longer just a party host; he's a "lonely star." Fame has become his new shield and his new prison. He uses it to justify his emotional detachment, setting the transactional and manipulative tone for the entire mixtape.</p><h3 class="analysis-heading">Key Lyric Analysis</h3><p><em>"This is my life, you're just a part of it / I'm not a part of you, you're a part of me."</em> This is a cold, cruel assertion of power and ownership. He's explicitly stating that the girl is an accessory to his life, not a partner in it. It's a complete reversal of the traditional dynamics of a relationship.</p><h3 class="analysis-heading">Vocal Performance</h3><p>His delivery is cool and measured, almost lecturing. He's laying down the law, and his calm, controlled vocals make the harshness of his words even more impactful. The soaring falsetto in the chorus feels less like a plea and more like a declaration of his untouchable status.</p><h3 class="analysis-heading">Production Deep Dive</h3><p>The production is dark and brooding, with a slow, deliberate tempo that gives his words space to land. The prominent, slinking bassline creates a sense of unease. The wailing, distorted guitar solo that closes the track is a standout moment, a blast of raw, rock-influenced emotion that contrasts with his controlled vocal delivery.</p><h3 class="analysis-heading">Mental Health Connection</h3><p>Fame is used here as a defense mechanism to rationalize a fear of intimacy. By declaring himself a "lonely star," he creates a narrative where emotional distance is not a personal failing but a professional necessity. This is a classic avoidance strategy, building walls to protect a fragile ego that is terrified of the vulnerability required for a real partnership.</p></div></details>
@@ -276,10 +301,11 @@
              <div class="text-center">
                 <h1 class="text-5xl md:text-7xl fancy-title title-eos reveal reveal-1">Echoes of Silence</h1>
                 <p class="text-lg text-gray-300 mt-4 max-w-xl mx-auto reveal reveal-2">The comedown. The party is over, leaving the protagonist with regret, paranoia, and emptiness. The hedonism leads to heartbreak and self-destruction, forcing him to confront the monster he's become.</p>
-                <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png"
-                     alt="Echoes of Silence Album Art"
+                <!-- Swapped Cover Art -->
+                <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png"
+                     alt="Thursday Album Art"
                      class="w-40 h-40 md:w-48 md:h-48 album-art reveal reveal-3"
-                     onerror="this.onerror=null;this.src='https://placehold.co/256x256/111111/555555?text=EOS';">
+                     onerror="this.onerror=null;this.src='https://placehold.co/256x256/111111/555555?text=Thursday';">
             </div>
             <div class="song-list mt-8 reveal reveal-4">
                 <details><summary>D.D.</summary><div class="details-content"><h3 class="analysis-heading">Narrative Role</h3><p>Opening the final mixtape with a cover of Michael Jackson's <em>Dirty Diana</em> is a brilliant narrative choice. It immediately frames the protagonist in a new light: as the famous, hunted rockstar. After two mixtapes of him being the predator, this song introduces the paranoia and consequences of fame. He's now the prey, haunted by the very figures he used to create.</p><h3 class="analysis-heading">Key Lyric Analysis</h3><p><em>"She said he's not coming back because he's sleeping with me."</em> By singing this line from the perspective of the groupie, he's embodying the force that is destroying someone else's relationship. It's a complex layering of identities that speaks to the cyclical and destructive nature of fame and lust.</p><h3 class="analysis-heading">Vocal Performance</h3><p>This is a raw, powerful, and aggressive vocal performance. He channels Michael Jackson's energy but infuses it with his own dark, desperate grit. He pushes his voice to its limits, screaming and growling, perfectly capturing the feeling of being cornered and paranoid.</p><h3 class="analysis-heading">Production Deep Dive</h3><p>The production is a darker, heavier, more industrial take on the 80s rock classic. The guitars are sludgy and distorted, the drums are pounding and relentless, and the overall atmosphere is one of intense, claustrophobic aggression. It successfully translates the song into the bleak sonic world of the Trilogy.</p><h3 class="analysis-heading">Mental Health Connection</h3><p>The song is drenched in paranoia. By casting himself in the role of the victim being hunted by a groupie, he may be projecting his own predatory behavior onto others to cope with his guilt. This victim complex allows him to reframe his experiences, avoiding accountability for his own actions by seeing himself as the one being pursued and destroyed.</p></div></details>
