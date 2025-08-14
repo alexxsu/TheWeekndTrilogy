@@ -60,7 +60,6 @@
         .fancy-title { font-weight: 900; color: transparent; background-clip: text; -webkit-background-clip: text; }
         .title-main { background-image: linear-gradient(to right, #808080, #ef4444, #f59e0b, #808080); animation: text-shimmer 6s linear infinite; background-size: 300% auto;}
         .title-hob { background-image: linear-gradient(to right, #b3b3b3, #666666, #b3b3b3); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
-        /* Swapped Styles */
         .title-thu { background-image: linear-gradient(to right, #facc15, #f59e0b, #facc15); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
         .title-eos { background-image: linear-gradient(to right, #ef4444, #b91c1c, #ef4444); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
 
@@ -125,7 +124,6 @@
             transform: scale(1.05) translateY(-10px) perspective(1000px) rotateX(5deg);
         }
         .album-choice-link:nth-child(1):hover .album-art { box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.3); }
-        /* These hover colors now match the swapped themes */
         .album-choice-link:nth-child(2):hover .album-art { box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.3); }
         .album-choice-link:nth-child(3):hover .album-art { box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.3); }
 
@@ -141,21 +139,27 @@
             box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.4);
         }
         #thursday .album-art:hover, #thursday .album-art:active {
-            /* Now yellow theme */
             box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.4);
         }
         #eos .album-art:hover, #eos .album-art:active {
-            /* Now red theme */
             box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.4);
         }
 
-
+        /* Reveal Animation */
         .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .section.active .reveal { opacity: 1; transform: translateY(0); }
         .section.active .reveal-1 { transition-delay: 0.2s; }
         .section.active .reveal-2 { transition-delay: 0.4s; }
         .section.active .reveal-3 { transition-delay: 0.6s; }
         .section.active .reveal-4 { transition-delay: 0.8s; }
+        
+        /* Footer Style */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -172,7 +176,6 @@
             <div class="color-block" style="background-color: #999999;"></div>
             <div class="color-block" style="background-color: #b3b3b3;"></div>
         </button>
-        <!-- Swapped Nav Bar -->
         <button class="nav-bar" id="nav-bar-thu" data-target="#thursday">
             <div class="color-block" style="background-color: #facc15;"></div>
             <div class="color-block" style="background-color: #f9a825;"></div>
@@ -182,7 +185,6 @@
             <div class="color-block" style="background-color: #92400e;"></div>
             <div class="color-block" style="background-color: #78350f;"></div>
         </button>
-        <!-- Swapped Nav Bar -->
         <button class="nav-bar" id="nav-bar-eos" data-target="#eos">
             <div class="color-block" style="background-color: #7f1d1d;"></div>
             <div class="color-block" style="background-color: #991b1b;"></div>
@@ -217,7 +219,6 @@
                         <a href="#hob" class="album-choice-link">
                             <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
-                        <!-- Swapped Album Art to match destination slides -->
                         <a href="#thursday" class="album-choice-link">
                             <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png" alt="Echoes of Silence Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
@@ -270,7 +271,6 @@
              <div class="text-center">
                 <h1 class="text-5xl md:text-7xl fancy-title title-thu reveal reveal-1">Thursday</h1>
                 <p class="text-lg text-gray-300 mt-4 max-w-xl mx-auto reveal reveal-2">The party's thrill wears off, replaced by routine and manipulation. Relationships are transactional, and he grapples with newfound fame. A specific girl becomes the focus of his manipulative tendencies.</p>
-                <!-- Swapped Cover Art -->
                 <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png"
                      alt="Echoes of Silence Album Art"
                      class="w-40 h-40 md:w-48 md:h-48 album-art reveal reveal-3"
@@ -301,7 +301,6 @@
              <div class="text-center">
                 <h1 class="text-5xl md:text-7xl fancy-title title-eos reveal reveal-1">Echoes of Silence</h1>
                 <p class="text-lg text-gray-300 mt-4 max-w-xl mx-auto reveal reveal-2">The comedown. The party is over, leaving the protagonist with regret, paranoia, and emptiness. The hedonism leads to heartbreak and self-destruction, forcing him to confront the monster he's become.</p>
-                <!-- Swapped Cover Art -->
                 <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png"
                      alt="Thursday Album Art"
                      class="w-40 h-40 md:w-48 md:h-48 album-art reveal reveal-3"
@@ -319,6 +318,10 @@
                 <details><summary>Echoes of Silence</summary><div class="details-content"><h3 class="analysis-heading">Narrative Role</h3><p>This is the final scene, the ultimate comedown. After the defiance, the horror, and the exhaustion, all that's left is a broken man begging for company. All the personas have been stripped away, leaving only a raw, desperate vulnerability. He is finally alone, and the silence is deafening. It's a devastating and poignant end to the entire three-act tragedy.</p><h3 class="analysis-heading">Key Lyric Analysis</h3><p><em>"Talk to me, baby / I'll be your friend / I'll be your friend."</em> This is a heartbreaking callback to <em>Wicked Games</em>. There, he was begging a stranger for the illusion of love. Here, he's begging someone he's hurt for the simple comfort of friendship. It shows how far he has fallen; he no longer asks for love, just for someone to talk to.</p><h3 class="analysis-heading">Vocal Performance</h3><p>This is his most raw and emotionally exposed vocal performance. Accompanied only by a piano, his voice cracks and strains with desperation and pain. There are no effects, no layers, just the sound of a man completely broken. The vulnerability is almost uncomfortable to listen to, and it's what makes the track so powerful.</p><h3 class="analysis-heading">Production Deep Dive</h3><p>The production is starkly minimalist, featuring only a mournful, solitary piano. The absence of drums, bass, and synths creates a vast, empty space that emphasizes his isolation. The choice to end the entire dark, complex, and heavily produced Trilogy with such a simple and raw arrangement is a stroke of genius, leaving the listener with nothing but the "echoes of silence" he describes.</p><h3 class="analysis-heading">Mental Health Connection</h3><p>This is rock bottom. The track is a portrait of complete emotional collapse and severe depression. The protagonist's defenses are gone, leaving only the raw pain of his isolation. His desperate plea for company, for someone to simply talk to, reveals the profound human need for connection that his entire lifestyle was built to avoid. The "echoes of silence" are the sound of his own crushing loneliness after pushing everyone away.</p></div></details>
                 <details><summary>Till Dawn (Here Comes the Sun) (Bonus Track)</summary><div class="details-content"><h3 class="analysis-heading">Narrative Role</h3><p>As the final track of the entire compilation, "Till Dawn" serves as a bleak, ambiguous sunrise. The party is over, the comedown from <em>Echoes of Silence</em> is complete, and now it's time to face the day. However, there is no redemption here. The protagonist simply decides to continue the cycle, finding a new girl to take home. It suggests that even after hitting rock bottom, he hasn't learned anything and is doomed to repeat his mistakes.</p><h3 class="analysis-heading">Key Lyric Analysis</h3><p><em>"I'll be here, till dawn / I'll be here, then I'm gone."</em> This couplet is the ultimate thesis statement for the protagonist's character. It's a promise of temporary presence followed by inevitable abandonment. The "here comes the sun" is not a symbol of hope, but a deadline for his departure. The cycle of darkness and fleeting light will continue.</p><h3 class="analysis-heading">Vocal Performance</h3><p>His vocal performance is surprisingly light and melodic, given the bleakness of the lyrics. He sings with a smooth, almost sweet falsetto that creates a chilling contrast with the cold reality of his actions. He sounds like he's accepted his fate, singing his nihilistic mantra with a beautiful, resigned melody.</p><h3 class="analysis-heading">Production Deep Dive</h3><p>The production is atmospheric and almost hopeful at first, with shimmering synths and a gentle beat that evoke the feeling of a sunrise. However, the underlying minor key and the melancholic tone prevent it from ever feeling truly optimistic. The production is a facade of hope, masking the unchanging darkness of the protagonist's core, a perfect end to the Trilogy's sonic journey.</p><h3 class="analysis-heading">Mental Health Connection</h3><p>The song is a portrait of functional depression and resignation. The protagonist has survived the emotional collapse of "Echoes of Silence," but he is not healed. Instead, he has integrated his destructive behavior into a sustainable, albeit empty, routine. His decision to "pick one" and continue the cycle is a sign of deep-seated nihilism and an inability to imagine a different way of life, a common feature of chronic depression and personality disorders.</p></div></details>
             </div>
+            <!-- Footer Added Here -->
+            <footer class="footer reveal reveal-4">
+                <p>&copy; 2025 Encore. All Rights Reserved.</p>
+            </footer>
         </div>
     </section>
 
