@@ -648,14 +648,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!moved) {
             const clickedButton = e.target.closest('button');
             if (clickedButton && clickedButton.dataset.target) {
+                // It was a direct click on a button, so navigate there
                 const target = document.querySelector(clickedButton.dataset.target);
                 if (target) {
-                    isScrolling = true;
                     container.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
-                    setTimeout(() => { isScrolling = false; }, 800);
+                    setTimeout(() => {
+                        container.style.scrollSnapType = 'y mandatory';
+                        isScrolling = false;
+                    }, 800);
                 }
+            } else {
+                // It was a click on the nav bar padding, or something went wrong.
+                // Just snap to the nearest section as a safe fallback.
+                snapToNearestSection();
             }
         } else {
+            // It was a drag, so snap to the nearest section
             snapToNearestSection();
         }
 
