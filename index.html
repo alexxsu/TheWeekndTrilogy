@@ -7,13 +7,53 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* --- Top Banner Styles --- */
+        #top-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0.5rem; /* 8px */
+            z-index: 5000;
+            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            /* FIX: Center the diamonds and add a gap */
+            justify-content: center;
+            gap: 2rem; /* 32px */
+        }
+
+        .banner-diamond {
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+            animation: banner-glow 15s infinite ease-in-out;
+        }
+
+        /* Staggered animation delays for a slow, gradual wave effect */
+        .banner-diamond:nth-child(1) { animation-delay: 0s; }
+        .banner-diamond:nth-child(2) { animation-delay: 1s; }
+        .banner-diamond:nth-child(3) { animation-delay: 2s; }
+
+
+        @keyframes banner-glow {
+            0%, 100% {
+                background-color: rgba(255, 255, 255, 0.1);
+                box-shadow: none;
+            }
+            50% {
+                background-color: rgba(255, 255, 255, 0.5);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            }
+        }
+
         /* --- Pre-loader Styles --- */
         #preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            /* FIX: Use 100svh (small viewport height) to ensure full coverage on mobile browsers with dynamic UI */
             height: 100vh; /* Fallback for older browsers */
             height: 100svh;
             background-color: #000;
@@ -37,9 +77,8 @@
             align-items: center;
         }
 
-        /* Using the banner's diamond animation for the preloader */
         .preloader-diamonds .diamond {
-            width: 20px; /* Larger for preloader */
+            width: 20px;
             height: 20px;
             background-color: #6b7280;
             transform: rotate(45deg);
@@ -62,7 +101,6 @@
             top: 0;
             left: 0;
             width: 100%;
-            /* FIX: Use 100svh (small viewport height) to ensure full coverage on mobile browsers with dynamic UI */
             height: 100vh; /* Fallback for older browsers */
             height: 100svh;
             z-index: 3000;
@@ -88,23 +126,19 @@
         .drag-nav-title {
             font-size: 2rem;
             font-weight: 900;
-            color: #6b7280; /* Muted Grey */
-            /* FIX: Removed transition from here to apply it via JS for smoother programmatic updates */
+            color: #6b7280;
             transform: scale(1);
-            background: none; /* Ensure no background by default */
+            background: none;
         }
 
         .drag-nav-title.active-snap {
-            /* This class is used by the observer for a clean snap, not during drag */
             transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            transform: scale(1.5); /* Much larger when active */
+            transform: scale(1.5);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
-
-        /* --- Original Styles --- */
         @keyframes text-shimmer {
             0% { background-position: -200% center; }
             100% { background-position: 200% center; }
@@ -125,7 +159,6 @@
             50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.25); }
         }
         
-        /* Base Styles */
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', sans-serif; background-color: #000; color: #E0E0E0; user-select: none; }
         .container { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
@@ -133,7 +166,6 @@
         .section { height: 100vh; width: 100vw; }
         .content-wrapper { height: 100vh; overflow-y: auto; transition: opacity 0.4s ease, transform 0.4s ease; }
 
-        /* --- DRAGGING STATE STYLES --- */
         body.is-dragging .content-wrapper {
             opacity: 0;
             transform: scale(0.95);
@@ -148,8 +180,6 @@
             visibility: visible;
         }
 
-
-        /* Shared Styles */
         .section { display: flex; align-items: center; justify-content: center; position: relative; scroll-snap-align: start; overflow: hidden; }
         .background-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.5s ease-out; transform: scale(1.25); opacity: 0.15; }
         .section.active .background-image { transform: scale(1); opacity: 0.25; }
@@ -164,7 +194,6 @@
         .content-wrapper::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
         .album-art { border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); margin: 1.5rem auto 0 auto; }
         
-        /* Title Styles */
         .fancy-title { font-weight: 900; color: transparent; background-clip: text; -webkit-background-clip: text; }
         .title-main { background-image: linear-gradient(to right, #808080, #ef4444, #f59e0b, #808080); animation: text-shimmer 6s linear infinite; background-size: 300% auto;}
         .title-hob { background-image: linear-gradient(to right, #b3b3b3, #666666, #b3b3b3); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
@@ -172,7 +201,6 @@
         .title-eos { background-image: linear-gradient(to right, #ef4444, #b91c1c, #ef4444); animation: text-shimmer 5s linear infinite; background-size: 200% auto;}
         .title-epilogue { background-image: linear-gradient(to right, #5a5a5a, #a7a7a7, #5a5a5a); animation: text-shimmer 6s linear infinite; background-size: 200% auto;}
 
-        /* Details Box General Styles */
         details { background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; margin-bottom: 1rem; transition: all 0.4s ease; text-align: left; }
         summary { list-style: none; cursor: pointer; padding: 1rem 1.5rem; font-weight: 700; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; }
         summary::-webkit-details-marker { display: none; }
@@ -183,7 +211,6 @@
         details .details-content.collapsing { animation: fadeOutDown 0.3s ease-in-out forwards; }
         .details-content p { margin-bottom: 1rem; }
         
-        /* Themed Details Box Styles */
         #hob details[open] { border-color: rgba(156, 163, 175, 0.7); box-shadow: 0 0 20px rgba(156, 163, 175, 0.1); }
         #hob summary::after { color: #9ca3af; }
         #hob details[open] summary::after { color: #d1d5db; }
@@ -199,7 +226,6 @@
         #eos details[open] summary::after { color: #f87171; }
         #eos .analysis-heading { color: #f87171; }
 
-        /* Navigation Styles */
         #page-nav { position: fixed; top: 50%; right: 1.5rem; transform: translateY(-50%); z-index: 4000; cursor: ns-resize; transition: transform 0.3s ease, filter 0.3s ease; }
         .nav-bar-container { 
             display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
@@ -230,22 +256,18 @@
         #nav-return-top { background-color: #fff; }
         #nav-bar-epilogue { background-color: #a7a7a7; }
 
-
-        /* Intro Slide Album Art Hover */
         .album-choice-link .album-art { transition: transform 0.4s ease, box-shadow 0.4s ease; }
         .album-choice-link:hover .album-art { transform: scale(1.05) translateY(-10px) perspective(1000px) rotateX(5deg); }
         .album-choice-link:nth-child(1):hover .album-art { box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.3); }
         .album-choice-link:nth-child(2):hover .album-art { box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.3); }
         .album-choice-link:nth-child(3):hover .album-art { box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.3); }
 
-        /* Hover/Touch feedback for album slides */
         .section .album-art { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, filter 0.4s ease; }
         .section .album-art:hover, .section .album-art:active { transform: scale(1.08) translateY(-8px) perspective(1200px) rotateX(3deg); filter: brightness(1.05); }
         #hob .album-art:hover, #hob .album-art:active { box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.4); }
         #thursday .album-art:hover, #thursday .album-art:active { box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.4); }
         #eos .album-art:hover, #eos .album-art:active { box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.4); }
 
-        /* Reveal Animation */
         .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .section.active .reveal { opacity: 1; transform: translateY(0); }
         .section.active .reveal-1 { transition-delay: 0.2s; }
@@ -253,11 +275,17 @@
         .section.active .reveal-3 { transition-delay: 0.6s; }
         .section.active .reveal-4 { transition-delay: 0.8s; }
         
-        /* Footer Style */
         .footer { text-align: center; padding: 2rem; font-size: 0.875rem; color: rgba(255, 255, 255, 0.4); }
     </style>
 </head>
 <body>
+
+<!-- NEW: Top Banner with Diamonds -->
+<div id="top-banner">
+    <div class="banner-diamond"></div>
+    <div class="banner-diamond"></div>
+    <div class="banner-diamond"></div>
+</div>
 
 <!-- Preloader with Diamond Animation -->
 <div id="preloader">
@@ -324,7 +352,8 @@
         <div class="content-wrapper">
             <div class="text-center py-8">
                 <div>
-                    <h1 class="text-4xl sm:text-5xl md:text-7xl font-black fancy-title title-main reveal reveal-1">The Trilogy</h1>
+                    <!-- FIX: Added pb-2 (padding-bottom) to prevent the 'g' from being clipped -->
+                    <h1 class="text-4xl sm:text-5xl md:text-7xl font-black fancy-title title-main reveal reveal-1 pb-2">The Trilogy</h1>
                     <h2 class="text-xl sm:text-2xl md:text-3xl text-gray-300 reveal reveal-2">A Narrative Deep Dive</h2>
                     <p class="text-base sm:text-lg text-gray-400 mt-6 max-w-3xl mx-auto reveal reveal-3">
                         The Weeknd's <em>Trilogy</em> is a cohesive three-act tragedy charting a modern-day Icarus's rise and fall. It begins with <em>House of Balloons</em>, an intoxicating invitation into a world of hedonism. This descent continues in <em>Thursday</em>, where the thrill sours into cynical routine. Finally, <em>Echoes of Silence</em> serves as the brutal comedown, leaving the protagonist to confront the hollow emptiness his actions have wrought.
@@ -332,15 +361,17 @@
                 </div>
                 <div class="mt-8 sm:mt-12 reveal reveal-4">
                     <h3 class="text-lg sm:text-xl font-bold text-gray-400 mb-6">Select an Act</h3>
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-4 sm:gap-8">
+                    <!-- FIX: Changed from flex-col to flex-row to ensure horizontal layout on all screen sizes -->
+                    <div class="flex flex-row justify-center items-center gap-4 sm:gap-8">
                         <a href="#hob" class="album-choice-link">
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <!-- FIX: Made album art responsive to prevent overflow on small screens -->
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                         <a href="#thursday" class="album-choice-link">
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png" alt="Echoes of Silence Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png" alt="Echoes of Silence Album Art" class="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                         <a href="#eos" class="album-choice-link">
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png" alt="Thursday Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png" alt="Thursday Album Art" class="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                     </div>
                 </div>
@@ -737,9 +768,21 @@ document.addEventListener('DOMContentLoaded', () => {
             behavior: 'smooth'
         });
 
+        // FIX: Add a robust timeout to ensure the active class is set, preventing blank screens.
         setTimeout(() => {
             container.style.scrollSnapType = 'y mandatory';
             isScrolling = false;
+            
+            // Manually trigger the active state for the snapped section
+            // This is a fallback for the Intersection Observer
+            sections.forEach(s => s.classList.remove('active'));
+            closestSection.classList.add('active');
+            
+            const correspondingNav = document.querySelector(`.nav-bar-container button[data-target="#${closestSection.id}"]`);
+            navButtons.forEach(b => b.classList.remove('active'));
+            if (correspondingNav) {
+                correspondingNav.classList.add('active');
+            }
         }, 800);
     };
 
