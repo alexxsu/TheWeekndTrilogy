@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FIX: Added viewport-fit=cover to allow the app to fill the entire screen on iPhones -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>The Trilogy: An Animated Deep Dive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,9 +14,11 @@
             top: 0;
             left: 0;
             width: 100%;
-            /* Increased height and added padding to accommodate the scaling animation */
             height: 1.25rem; /* 20px */
-            padding-top: 6px;
+            /* FIX: Use CSS env() to add padding for the iPhone's safe area (Dynamic Island/notch) */
+            padding-top: calc(6px + env(safe-area-inset-top));
+            height: calc(1.25rem + env(safe-area-inset-top));
+            box-sizing: content-box;
             z-index: 5000;
             pointer-events: none;
             display: flex;
@@ -28,16 +31,13 @@
             height: 8px;
             background-color: rgba(255, 255, 255, 0.1);
             transform: rotate(45deg);
-            /* New animation name and duration */
             animation: banner-pulse 10s infinite ease-in-out;
         }
 
-        /* Staggered animation delays for a slow wave */
         .banner-diamond:nth-child(1) { animation-delay: 0s; }
         .banner-diamond:nth-child(2) { animation-delay: 0.7s; }
         .banner-diamond:nth-child(3) { animation-delay: 1.4s; }
 
-        /* New Keyframes for the pulse effect */
         @keyframes banner-pulse {
             0%, 100% {
                 transform: rotate(45deg) scale(1);
@@ -45,19 +45,16 @@
                 box-shadow: none;
             }
             25% {
-                /* Enlarge first while still dim */
                 transform: rotate(45deg) scale(1.8);
                 background-color: rgba(255, 255, 255, 0.2);
                 box-shadow: none;
             }
             50% {
-                /* Turn bright white at peak size */
                 transform: rotate(45deg) scale(1.8);
                 background-color: #ffffff;
                 box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
             }
             75% {
-                /* Hold the white color while shrinking back */
                 transform: rotate(45deg) scale(1);
                 background-color: #ffffff;
                 box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
@@ -177,7 +174,14 @@
         }
         
         html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: #000; color: #E0E0E0; user-select: none; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #000; 
+            color: #E0E0E0; 
+            user-select: none;
+            /* FIX: Add padding to the body to respect the safe area on iPhones */
+            padding-top: env(safe-area-inset-top);
+        }
         .container { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
         .container::-webkit-scrollbar { display: none; }
         .section { height: 100vh; width: 100vw; }
@@ -381,14 +385,14 @@
                     <!-- FIX: Changed from flex-col to flex-row to ensure horizontal layout on all screen sizes -->
                     <div class="flex flex-row justify-center items-center gap-4 sm:gap-8">
                         <a href="#hob" class="album-choice-link">
-                            <!-- FIX: Made album art responsive to prevent overflow on small screens -->
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <!-- FIX: Reverted album art sizes to original -->
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                         <a href="#thursday" class="album-choice-link">
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png" alt="Echoes of Silence Album Art" class="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2F1d4e1b8dd401906009d931e7a7c6a3bb.1000x1000x1.png" alt="Echoes of Silence Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                         <a href="#eos" class="album-choice-link">
-                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png" alt="Thursday Album Art" class="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
+                            <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fa83a29dd26a6e4fe50bba0ef25c7bb19.1000x1000x1.png" alt="Thursday Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                     </div>
                 </div>
