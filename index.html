@@ -13,7 +13,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             background-color: #000;
             display: flex;
             justify-content: center;
@@ -42,11 +42,9 @@
             background-color: #6b7280;
             transform: rotate(45deg);
             margin: 0 25px;
-            /* FIX: Sped up animation duration */
             animation: light-up 0.9s infinite ease-in-out;
         }
 
-        /* FIX: Adjusted delays for faster animation */
         .preloader-diamonds .diamond:nth-child(2) { animation-delay: 0.3s; }
         .preloader-diamonds .diamond:nth-child(3) { animation-delay: 0.6s; }
 
@@ -62,7 +60,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             z-index: 3000;
             display: flex;
             justify-content: center;
@@ -87,12 +85,14 @@
             font-size: 2rem;
             font-weight: 900;
             color: #6b7280; /* Muted Grey */
-            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            /* FIX: Removed transition from here to apply it via JS for smoother programmatic updates */
             transform: scale(1);
             background: none; /* Ensure no background by default */
         }
 
-        .drag-nav-title.active {
+        .drag-nav-title.active-snap {
+            /* This class is used by the observer for a clean snap, not during drag */
+            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
             transform: scale(1.5); /* Much larger when active */
             -webkit-background-clip: text;
             background-clip: text;
@@ -485,19 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let isScrolling = false;
     
-    // --- Standard Button Navigation Click Logic ---
-    navButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const target = document.querySelector(button.dataset.target);
-            if (target) {
-                isScrolling = true;
-                container.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
-                setTimeout(() => { isScrolling = false; }, 1000);
-            }
-        });
-    });
-
     // --- Album Cover Click Logic ---
     const albumLinks = document.querySelectorAll('.album-choice-link');
     albumLinks.forEach(link => {
@@ -513,25 +500,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Intersection Observer for Active States ---
+    // --- Intersection Observer for Active States (when not dragging) ---
     const observer = new IntersectionObserver((entries) => {
+        if (isDragging) return; // Don't run observer logic while user is actively dragging
         entries.forEach(entry => {
             const sectionId = entry.target.id;
             const correspondingNav = document.querySelector(`.nav-bar-container button[data-target="#${sectionId}"]`);
+            const correspondingTitle = document.querySelector(`.drag-nav-title[data-target="#${sectionId}"]`);
             
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
+                // Update side nav dots
                 navButtons.forEach(b => b.classList.remove('active'));
                 if (correspondingNav) {
                     correspondingNav.classList.add('active');
                 }
+                // Update title list for snap scrolling
+                dragNavTitleItems.forEach(item => {
+                    item.classList.remove('active-snap');
+                    item.style.backgroundImage = 'none';
+                    item.style.color = '';
+                });
+                if(correspondingTitle) {
+                    correspondingTitle.classList.add('active-snap');
+                    correspondingTitle.style.backgroundImage = entry.target.dataset.gradient || 'none';
+                }
+
             } else {
                 entry.target.classList.remove('active');
             }
         });
     }, { 
         root: container,
-        threshold: 0.5
+        threshold: 0.7 // A higher threshold feels better for snap scrolling
     });
 
     sections.forEach(section => observer.observe(section));
@@ -587,15 +588,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- REBUILT: Drag-to-Scroll Navigation Logic ---
+    // --- REBUILT: Drag-to-Scroll & Click Navigation Logic ---
     let isDragging = false;
     let startY;
     let startScrollTop;
+    let moved = false;
     let rafId; 
 
     const dragStart = (e) => {
         e.preventDefault();
         isDragging = true;
+        moved = false; 
         isScrolling = true;
         startY = e.touches ? e.touches[0].pageY : e.pageY;
         startScrollTop = container.scrollTop;
@@ -603,6 +606,9 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('is-dragging');
         container.style.scrollSnapType = 'none';
         
+        // Remove transitions from titles for smooth programmatic updates
+        dragNavTitleItems.forEach(item => item.classList.remove('active-snap'));
+
         updateActiveDragTitle();
 
         document.addEventListener('mousemove', dragMove, { passive: false });
@@ -614,24 +620,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const dragMove = (e) => {
         if (!isDragging) return;
         e.preventDefault();
+        moved = true;
         
         cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(() => {
             const y = e.touches ? e.touches[0].pageY : e.pageY;
-            // FIX: Reversed direction and increased sensitivity
-            const walk = (startY - y) * 15; 
+            // FIX: Corrected direction and increased sensitivity
+            // Moving finger UP (y < startY) should DECREASE scrollTop.
+            const walk = (y - startY) * 20; 
             container.scrollTop = startScrollTop + walk;
             updateActiveDragTitle();
         });
     };
 
-    const dragEnd = () => {
+    const dragEnd = (e) => {
         if (!isDragging) return;
         isDragging = false;
         
         cancelAnimationFrame(rafId);
         body.classList.remove('is-dragging');
-        snapToNearestSection();
+        
+        // FIX: Handle click action if no drag occurred
+        if (!moved) {
+            const clickedButton = e.target.closest('button');
+            if (clickedButton && clickedButton.dataset.target) {
+                const target = document.querySelector(clickedButton.dataset.target);
+                if (target) {
+                    isScrolling = true;
+                    container.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+                    setTimeout(() => { isScrolling = false; }, 800);
+                }
+            }
+        } else {
+            snapToNearestSection();
+        }
 
         document.removeEventListener('mousemove', dragMove);
         document.removeEventListener('touchmove', dragMove);
@@ -639,36 +661,59 @@ document.addEventListener('DOMContentLoaded', () => {
         document.removeEventListener('touchend', dragEnd);
     };
 
+    // FIX: New fluid animation logic for titles during drag
     const updateActiveDragTitle = () => {
-        const currentScroll = container.scrollTop;
-        let activeSection = sections[0];
+        const scroll = container.scrollTop;
+        const containerHeight = container.clientHeight;
 
-        for (const section of sections) {
-            if (section.offsetTop <= currentScroll + container.clientHeight / 2) {
-                activeSection = section;
-            }
-        }
-        
-        dragNavTitleItems.forEach(item => {
-            const targetSection = document.querySelector(item.dataset.target);
-            if (targetSection === activeSection) {
-                item.classList.add('active');
-                item.style.backgroundImage = targetSection.dataset.gradient || 'none';
+        sections.forEach((section, index) => {
+            const title = dragNavTitleItems[index];
+            if (!title) return;
+
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            
+            // Calculate how far the center of the viewport is from the center of the section
+            const viewCenter = scroll + containerHeight / 2;
+            const sectionCenter = sectionTop + sectionHeight / 2;
+            const distance = Math.abs(viewCenter - sectionCenter);
+
+            // Calculate progress based on distance, clamped between 0 and 1
+            // 0 = perfectly centered, 1 = one full screen height away or more
+            const progress = Math.min(1, distance / containerHeight);
+
+            // Interpolate scale from 1.5 (centered) to 1.0 (far away)
+            const scale = 1.5 - (progress * 0.5);
+            
+            // Interpolate color opacity. 1 = centered, 0 = far away
+            const opacity = 1 - progress;
+
+            title.style.transform = `scale(${scale})`;
+            
+            // Apply gradient and transparency based on opacity
+            if (opacity > 0.1) {
+                title.style.backgroundImage = section.dataset.gradient;
+                title.style.backgroundClip = 'text';
+                title.style.webkitBackgroundClip = 'text';
+                // Blend between transparent (gradient) and grey
+                title.style.color = `rgba(107, 114, 128, ${1 - opacity})`; 
             } else {
-                item.classList.remove('active');
-                item.style.backgroundImage = 'none';
-                item.style.color = ''; 
+                title.style.backgroundImage = 'none';
+                title.style.color = '#6b7280'; // Muted Grey
             }
         });
     };
     
     const snapToNearestSection = () => {
         const currentScroll = container.scrollTop;
+        const viewportCenter = currentScroll + container.clientHeight / 2;
+        
         let closestSection = sections[0];
-        let smallestDistance = Math.abs(currentScroll - closestSection.offsetTop);
+        let smallestDistance = Math.abs(viewportCenter - (closestSection.offsetTop + closestSection.clientHeight / 2));
 
         sections.forEach(section => {
-            const distance = Math.abs(currentScroll - section.offsetTop);
+            const sectionCenter = section.offsetTop + section.clientHeight / 2;
+            const distance = Math.abs(viewportCenter - sectionCenter);
             if (distance < smallestDistance) {
                 smallestDistance = distance;
                 closestSection = section;
