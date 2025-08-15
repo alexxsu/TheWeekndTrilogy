@@ -117,7 +117,8 @@
             width: 100%;
             height: 100vh; /* Fallback for older browsers */
             height: 100svh;
-            z-index: 3000;
+            /* FIX: Increased z-index to ensure it covers the side navigation */
+            z-index: 4500;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -173,7 +174,11 @@
             50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.25); }
         }
         
-        html { scroll-behavior: smooth; }
+        /* FIX: Set background color on html to fill safe areas on iPhone */
+        html { 
+            scroll-behavior: smooth; 
+            background-color: #000;
+        }
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #000; 
