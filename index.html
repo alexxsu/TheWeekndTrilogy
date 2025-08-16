@@ -281,10 +281,11 @@
             transform: translateY(0);
         }
 
-        summary { list-style: none; cursor: pointer; padding: 1rem 1.5rem; font-weight: 700; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; }
+        summary { list-style: none; cursor: pointer; padding: 1rem 1.5rem; font-weight: 700; font-size: 1.1rem; display: flex; justify-content: flex-start; align-items: center;
+  gap: 0.75rem; }
         summary::-webkit-details-marker { display: none; }
         
-        summary::after { 
+        summary::before { 
             content: '+'; 
             font-size: 2rem; 
             line-height: 0;
@@ -292,7 +293,7 @@
             transform: rotate(0deg);
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
         }
-        details[open] summary::after { 
+        details[open] summary::before { 
             transform: rotate(45deg); 
         }
         
@@ -308,23 +309,23 @@
         .details-content p { margin-bottom: 1rem; }
         
         #hob details[open] { border-color: rgba(156, 163, 175, 0.7); box-shadow: 0 0 20px rgba(156, 163, 175, 0.1); }
-        #hob summary::after { color: #9ca3af; }
-        #hob details[open] summary::after { color: #d1d5db; }
+        #hob summary::before { color: #9ca3af; }
+        #hob details[open] summary::before { color: #d1d5db; }
         #hob .analysis-heading { color: #d1d5db; }
 
         #thursday details[open] { border-color: rgba(245, 158, 11, 0.7); box-shadow: 0 0 20px rgba(245, 158, 11, 0.1); }
-        #thursday summary::after { color: #f59e0b; }
-        #thursday details[open] summary::after { color: #facc15; }
+        #thursday summary::before { color: #f59e0b; }
+        #thursday details[open] summary::before { color: #facc15; }
         #thursday .analysis-heading { color: #facc15; }
 
         #eos details[open] { border-color: rgba(239, 68, 68, 0.7); box-shadow: 0 0 20px rgba(239, 68, 68, 0.1); }
-        #eos summary::after { color: #ef4444; }
-        #eos details[open] summary::after { color: #f87171; }
+        #eos summary::before { color: #ef4444; }
+        #eos details[open] summary::before { color: #f87171; }
         #eos .analysis-heading { color: #f87171; }
         
         #samples details[open] { border-color: rgba(100, 116, 139, 0.7); box-shadow: 0 0 20px rgba(100, 116, 139, 0.1); }
-        #samples summary::after { color: #94a3b8; }
-        #samples details[open] summary::after { color: #cbd5e1; }
+        #samples summary::before { color: #94a3b8; }
+        #samples details[open] summary::before { color: #cbd5e1; }
         #samples .analysis-heading { color: #cbd5e1; }
 
 
@@ -495,6 +496,71 @@ body {
 }
 /* === End patch === */
 </style>
+
+<style>
+/* === Patch: First slide interactivity cue + icon to the left === */
+@keyframes pulse-text {
+  0%, 100% { color: #9ca3af; transform: scale(1); }
+  50% { color: #ffffff; transform: scale(1.1); }
+}
+#intro h3 { animation: pulse-text 2s infinite ease-in-out; }
+
+/* Enhance album hover feedback */
+.album-choice-link .album-art {
+  transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
+}
+.album-choice-link:hover .album-art {
+  transform: scale(1.1);
+  filter: brightness(1.08);
+  box-shadow: 0 0 20px rgba(255,255,255,0.35);
+}
+
+/* Normalize summary icon (now on the left via ::before) */
+summary::before { 
+  content: '+'; 
+  font-size: 1.6rem; 
+  line-height: 1; 
+  display: inline-block;
+  transform: rotate(0deg);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+details[open] summary::before { transform: rotate(45deg); }
+
+
+</style>
+<style>
+
+/* === Patch v2: icon centering square === */
+summary::before { 
+  content: '+';
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+  transform: rotate(0deg) translateY(1px);
+  transform-origin: 50% 50%;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  flex-shrink: 0;
+}
+details[open] summary::before { transform: rotate(45deg) translateY(1px); }
+
+</style>
+<style>
+
+/* === Patch v2: reliable pulse on 'Select an Act' === */
+@keyframes pulse-text-v2 {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+.select-act-pulse {
+  animation: pulse-text-v2 1.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+</style>
 </head>
 <body>
 
@@ -579,7 +645,7 @@ body {
                     </p>
                 </div>
                 <div class="mt-8 sm:mt-12 reveal reveal-4">
-                    <h3 class="text-lg sm:text-xl font-bold text-gray-400 mb-6">Select an Act</h3>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-400 mb-6 select-act-pulse">Select an Act</h3>
                     <div class="flex flex-row justify-center items-center gap-4 sm:gap-8">
                         <a href="#hob" class="album-choice-link">
                             <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
