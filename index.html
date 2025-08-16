@@ -561,6 +561,37 @@ details[open] summary::before { transform: rotate(45deg) translateY(1px); }
 }
 
 </style>
+<style>
+
+
+#drag-nav-titles-list .drag-nav-title:last-child {
+  
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+</style>
+<style>
+
+/* === Patch v4: Gradient elegant divider lines === */
+#drag-nav-titles-list .drag-nav-title:first-child::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin: 0.75rem auto;
+  width: 60%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 80%);
+}
+#drag-nav-titles-list .drag-nav-title:nth-child(4)::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin: 0.75rem auto;
+  width: 60%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 80%);
+}
+
+</style>
 </head>
 <body>
 
