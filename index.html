@@ -11,12 +11,10 @@
         /* --- NEW: Redesigned Top Banner Styles --- */
         #top-banner {
             position: fixed;
-            /* CHANGE: Lowered the banner from the top */
             top: 1rem; 
             left: 0;
             width: 100%;
             height: 1.25rem; /* 20px */
-            /* FIX: Use CSS env() to add padding for the iPhone's safe area (Dynamic Island/notch) */
             padding-top: calc(6px + env(safe-area-inset-top));
             height: calc(1.25rem + env(safe-area-inset-top));
             box-sizing: content-box;
@@ -118,7 +116,6 @@
             width: 100%;
             height: 100vh; /* Fallback for older browsers */
             height: 100svh;
-            /* FIX: Increased z-index to ensure it covers the side navigation */
             z-index: 4500;
             display: flex;
             justify-content: center;
@@ -175,7 +172,12 @@
             50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.25); }
         }
         
-        /* FIX: Set background color on html to fill safe areas on iPhone */
+        @keyframes ken-burns {
+            0% { transform: scale(1.25) translate(0, 0); }
+            50% { transform: scale(1.3) translate(-1%, 1%); }
+            100% { transform: scale(1.25) translate(0, 0); }
+        }
+
         html { 
             scroll-behavior: smooth; 
             background-color: #000;
@@ -185,7 +187,6 @@
             background-color: #000; 
             color: #E0E0E0; 
             user-select: none;
-            /* FIX: Add padding to the body to respect the safe area on iPhones */
             padding-top: env(safe-area-inset-top);
         }
         .container { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
@@ -208,8 +209,16 @@
         }
 
         .section { display: flex; align-items: center; justify-content: center; position: relative; scroll-snap-align: start; overflow: hidden; }
-        .background-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.5s ease-out; transform: scale(1.25); opacity: 0.15; }
-        .section.active .background-image { transform: scale(1); opacity: 0.25; }
+        .background-image { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; 
+            transition: opacity 1.5s ease-out; 
+            transform: scale(1.25); 
+            opacity: 0.15;
+            animation: ken-burns 30s infinite ease-in-out;
+        }
+        .section.active .background-image { 
+            opacity: 0.25; 
+        }
         .vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,1) 100%); z-index: 2; }
         .content-wrapper { position: relative; z-index: 10; width: 100%; max-width: 1000px; padding: 2rem 1rem; }
         @media (min-width: 640px) {
@@ -229,18 +238,30 @@
         .title-epilogue { background-image: linear-gradient(to right, #5a5a5a, #a7a7a7, #5a5a5a); animation: text-shimmer 6s linear infinite; background-size: 200% auto;}
 
         details { background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; margin-bottom: 1rem; transition: all 0.4s ease; text-align: left; }
+        .song-list details {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .song-list details.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         summary { list-style: none; cursor: pointer; padding: 1rem 1.5rem; font-weight: 700; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; }
         summary::-webkit-details-marker { display: none; }
-        /* FIX: Adjusted plus/minus icon for better vertical alignment */
+        
+        /* BUG FIX: Added explicit initial transform and display properties to ensure smooth animation */
         summary::after { 
             content: '+'; 
             font-size: 2rem; 
-            line-height: 0; /* Prevents extra line height from pushing it down */
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), content 0.4s; 
+            line-height: 0;
+            display: inline-block; /* Ensures transform works consistently */
+            transform: rotate(0deg); /* Explicitly set the starting rotation */
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
         }
         details[open] summary::after { 
-            content: '−'; 
-            transform: none; 
+            transform: rotate(45deg); 
         }
         .details-content { padding: 0 1.5rem 1.5rem 1.5rem; line-height: 1.7; color: #b0b0b0; }
         details[open] .details-content { animation: fadeInUp 0.5s ease-in-out; }
@@ -292,14 +313,15 @@
         #nav-return-top { background-color: #fff; }
         #nav-bar-epilogue { background-color: #a7a7a7; }
 
+        /* CHANGE: Enhanced album art hover effect */
         .album-choice-link .album-art { transition: transform 0.4s ease, box-shadow 0.4s ease; }
-        .album-choice-link:hover .album-art { transform: scale(1.05) translateY(-10px) perspective(1000px) rotateX(5deg); }
+        .album-choice-link:hover .album-art { transform: scale(1.05) translateY(-10px) perspective(1000px) rotateY(5deg); }
         .album-choice-link:nth-child(1):hover .album-art { box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.3); }
         .album-choice-link:nth-child(2):hover .album-art { box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.3); }
         .album-choice-link:nth-child(3):hover .album-art { box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.3); }
 
         .section .album-art { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, filter 0.4s ease; }
-        .section .album-art:hover, .section .album-art:active { transform: scale(1.08) translateY(-8px) perspective(1200px) rotateX(3deg); filter: brightness(1.05); }
+        .section .album-art:hover, .section .album-art:active { transform: scale(1.08) translateY(-8px) perspective(1200px) rotateY(3deg) rotateX(3deg); filter: brightness(1.05); }
         #hob .album-art:hover, #hob .album-art:active { box-shadow: 0 40px 50px -20px rgba(179, 179, 179, 0.4); }
         #thursday .album-art:hover, #thursday .album-art:active { box-shadow: 0 40px 50px -20px rgba(245, 158, 11, 0.4); }
         #eos .album-art:hover, #eos .album-art:active { box-shadow: 0 40px 50px -20px rgba(239, 68, 68, 0.4); }
@@ -313,6 +335,22 @@
         .section.active .reveal-5 { transition-delay: 1.0s; }
         
         .footer { text-align: center; padding: 2rem; font-size: 0.875rem; color: rgba(255, 255, 255, 0.4); }
+
+        /* CHANGE: Styles for minimalist audio player */
+        #audio-player-container {
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        #audio-player-container:hover {
+            background-color: rgba(0,0,0,0.25);
+            border-color: rgba(255,255,255,0.1);
+        }
+        #audio-player-container .time-display {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #audio-player-container:hover .time-display {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -389,7 +427,6 @@
         <div class="content-wrapper">
             <div class="text-center py-8">
                 <div>
-                    <!-- FIX: Added pb-2 (padding-bottom) to prevent the 'g' from being clipped -->
                     <h1 class="text-4xl sm:text-5xl md:text-7xl font-black fancy-title title-main reveal reveal-1 pb-2">The Trilogy</h1>
                     <h2 class="text-xl sm:text-2xl md:text-3xl text-gray-300 reveal reveal-2">A Narrative Deep Dive</h2>
                     <p class="text-base sm:text-lg text-gray-400 mt-6 max-w-3xl mx-auto reveal reveal-3">
@@ -398,10 +435,8 @@
                 </div>
                 <div class="mt-8 sm:mt-12 reveal reveal-4">
                     <h3 class="text-lg sm:text-xl font-bold text-gray-400 mb-6">Select an Act</h3>
-                    <!-- FIX: Changed from flex-col to flex-row to ensure horizontal layout on all screen sizes -->
                     <div class="flex flex-row justify-center items-center gap-4 sm:gap-8">
                         <a href="#hob" class="album-choice-link">
-                            <!-- FIX: Reverted album art sizes to original -->
                             <img src="https://t2.genius.com/unsafe/1458x0/https%3A%2F%2Fimages.genius.com%2Fda5c113dd66b79605b1a74911dbb4576.1000x1000x1.png" alt="House of Balloons Album Art" class="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 album-art">
                         </a>
                         <a href="#thursday" class="album-choice-link">
@@ -413,24 +448,25 @@
                     </div>
                 </div>
 
-                <!-- NEW: Custom Audio Player -->
+                <!-- CHANGE: Minimalist Custom Audio Player -->
                 <div id="audio-overview" class="mt-8 sm:mt-12 w-full max-w-2xl mx-auto reveal reveal-5">
-                    <h3 class="text-base sm:text-lg font-bold text-gray-400 mb-4 text-center">Trilogy: Audio Overview</h3>
-                    <div class="bg-black bg-opacity-25 border border-white border-opacity-10 rounded-full p-2 flex items-center gap-4 backdrop-blur-sm">
+                    <div id="audio-player-container" class="border border-transparent rounded-full p-2 flex items-center gap-4">
                         <audio id="trilogy-audio" src="Audio_Overview.mp3"></audio>
-                        <button id="play-pause-btn" class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white text-black rounded-full focus:outline-none transition-transform duration-200 hover:scale-110 active:scale-100">
+                        <!-- CHANGE: Play button is now transparent -->
+                        <button id="play-pause-btn" class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-transparent text-white rounded-full focus:outline-none transition-transform duration-200 hover:scale-110 active:scale-100">
                             <!-- Play Icon SVG -->
-                            <svg class="w-5 h-5" id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                            <svg class="w-6 h-6" id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
                             <!-- Pause Icon SVG (hidden by default) -->
-                            <svg class="w-5 h-5 hidden" id="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                            <svg class="w-6 h-6 hidden" id="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
                         </button>
-                        <div id="current-time" class="text-sm text-gray-300 font-mono">0:00</div>
-                        <div id="seek-bar-container" class="w-full h-2 bg-white bg-opacity-10 rounded-full cursor-pointer group">
-                            <div id="seek-bar-progress" class="h-full bg-white rounded-full relative">
+                        <div id="current-time" class="text-sm text-gray-400 font-mono time-display">0:00</div>
+                        <!-- CHANGE: Seek bar has sharp corners -->
+                        <div id="seek-bar-container" class="w-full h-1 bg-white bg-opacity-20 cursor-pointer group">
+                            <div id="seek-bar-progress" class="h-full bg-white relative">
                                 <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
                         </div>
-                        <div id="duration" class="text-sm text-gray-300 font-mono">0:00</div>
+                        <div id="duration" class="text-sm text-gray-400 font-mono time-display">0:00</div>
                     </div>
                 </div>
 
@@ -719,8 +755,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(() => {
             const y = e.touches ? e.touches[0].pageY : e.pageY;
-            // FIX: Corrected direction and reduced sensitivity
-            // Moving finger UP (y < startY) should DECREASE scrollTop.
             const walk = (y - startY) * 15; 
             container.scrollTop = startScrollTop + walk;
             updateActiveDragTitle();
@@ -734,11 +768,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelAnimationFrame(rafId);
         body.classList.remove('is-dragging');
         
-        // FIX: Handle click action if no drag occurred
         if (!moved) {
             const clickedButton = e.target.closest('button');
             if (clickedButton && clickedButton.dataset.target) {
-                // It was a direct click on a button, so navigate there
                 const target = document.querySelector(clickedButton.dataset.target);
                 if (target) {
                     container.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
@@ -748,12 +780,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 800);
                 }
             } else {
-                // It was a click on the nav bar padding, or something went wrong.
-                // Just snap to the nearest section as a safe fallback.
                 snapToNearestSection();
             }
         } else {
-            // It was a drag, so snap to the nearest section
             snapToNearestSection();
         }
 
@@ -763,7 +792,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.removeEventListener('touchend', dragEnd);
     };
 
-    // FIX: New fluid animation logic for titles during drag
     const updateActiveDragTitle = () => {
         const scroll = container.scrollTop;
         const containerHeight = container.clientHeight;
@@ -775,33 +803,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const sectionTop = section.offsetTop;
             const sectionHeight = section.clientHeight;
             
-            // Calculate how far the center of the viewport is from the center of the section
             const viewCenter = scroll + containerHeight / 2;
             const sectionCenter = sectionTop + sectionHeight / 2;
             const distance = Math.abs(viewCenter - sectionCenter);
 
-            // Calculate progress based on distance, clamped between 0 and 1
-            // 0 = perfectly centered, 1 = one full screen height away or more
             const progress = Math.min(1, distance / containerHeight);
-
-            // Interpolate scale from 1.5 (centered) to 1.0 (far away)
             const scale = 1.5 - (progress * 0.5);
-            
-            // Interpolate color opacity. 1 = centered, 0 = far away
             const opacity = 1 - progress;
 
             title.style.transform = `scale(${scale})`;
             
-            // Apply gradient and transparency based on opacity
             if (opacity > 0.1) {
                 title.style.backgroundImage = section.dataset.gradient;
                 title.style.backgroundClip = 'text';
                 title.style.webkitBackgroundClip = 'text';
-                // Blend between transparent (gradient) and grey
                 title.style.color = `rgba(107, 114, 128, ${1 - opacity})`; 
             } else {
                 title.style.backgroundImage = 'none';
-                title.style.color = '#6b7280'; // Muted Grey
+                title.style.color = '#6b7280';
             }
         });
     };
@@ -827,13 +846,9 @@ document.addEventListener('DOMContentLoaded', () => {
             behavior: 'smooth'
         });
 
-        // FIX: Add a robust timeout to ensure the active class is set, preventing blank screens.
         setTimeout(() => {
             container.style.scrollSnapType = 'y mandatory';
             isScrolling = false;
-            
-            // Manually trigger the active state for the snapped section
-            // This is a fallback for the Intersection Observer
             sections.forEach(s => s.classList.remove('active'));
             closestSection.classList.add('active');
             
@@ -848,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pageNav.addEventListener('mousedown', dragStart);
     pageNav.addEventListener('touchstart', dragStart);
 
-    // --- NEW: Custom Audio Player Logic ---
+    // --- Custom Audio Player Logic ---
     const audio = document.getElementById('trilogy-audio');
     const playPauseBtn = document.getElementById('play-pause-btn');
     const playIcon = document.getElementById('play-icon');
@@ -858,7 +873,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTimeEl = document.getElementById('current-time');
     const durationEl = document.getElementById('duration');
 
-    // Function to format time (e.g., 65 seconds -> 1:05)
     const formatTime = (timeInSeconds) => {
         if (isNaN(timeInSeconds)) return '0:00';
         const minutes = Math.floor(timeInSeconds / 60);
@@ -866,7 +880,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     };
 
-    // Play/Pause functionality
     playPauseBtn.addEventListener('click', () => {
         if (audio.paused) {
             audio.play();
@@ -885,7 +898,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pauseIcon.classList.add('hidden');
     });
 
-    // Update seek bar and time displays on time update
     audio.addEventListener('timeupdate', () => {
         const { currentTime, duration } = audio;
         if (duration) {
@@ -895,12 +907,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Update total duration when metadata loads
     audio.addEventListener('loadedmetadata', () => {
         durationEl.textContent = formatTime(audio.duration);
     });
     
-    // Handle seeking by clicking on the progress bar
     seekBarContainer.addEventListener('click', (e) => {
         const width = seekBarContainer.clientWidth;
         const clickX = e.offsetX;
@@ -910,13 +920,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // BUG FIX: Add error handling for the audio file
     audio.addEventListener('error', () => {
         console.error("Audio file could not be loaded. Check the 'src' path.");
         playPauseBtn.disabled = true;
         playPauseBtn.style.opacity = '0.5';
         seekBarContainer.style.pointerEvents = 'none';
         durationEl.textContent = 'Error';
+    });
+
+    // --- NEW: Parallax Scrolling Effect ---
+    container.addEventListener('scroll', () => {
+        const scrollTop = container.scrollTop;
+        const containerHeight = container.clientHeight;
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            const bgImage = section.querySelector('.background-image');
+
+            if (scrollTop + containerHeight > sectionTop && scrollTop < sectionTop + sectionHeight) {
+                const scrollProgress = (scrollTop - sectionTop) / containerHeight;
+                const parallaxOffset = scrollProgress * 150; // Adjust this value for more/less parallax
+                if (bgImage) {
+                    bgImage.style.transform = `translateY(${parallaxOffset}px)`;
+                }
+            }
+        });
+    });
+
+    // --- NEW: Content Reveal on Scroll ---
+    const detailObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('revealed');
+                }, index * 150); 
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        root: null, 
+        threshold: 0.2
+    });
+
+    document.querySelectorAll('.song-list details').forEach(detail => {
+        detailObserver.observe(detail);
     });
 });
 </script>
