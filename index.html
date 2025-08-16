@@ -119,7 +119,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* FIX: Removed background color to reveal the image behind it */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             opacity: 0;
@@ -466,6 +465,36 @@
         }
 
     </style>
+<style>
+/* === ChatGPT patch: mobile full-bleed background + centering === */
+html, body { height: 100%; }
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.container,
+.section,
+.content-wrapper {
+  height: 100vh;   /* fallback */
+  height: 100dvh;  /* modern mobile browsers */
+}
+#drag-background,
+.background-image {
+  height: 100vh;   /* fallback */
+  height: 100dvh;
+  background-size: cover;
+  background-position: center;
+}
+.section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  scroll-snap-align: start;
+  overflow: hidden;
+}
+/* === End patch === */
+</style>
 </head>
 <body>
 
@@ -918,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const y = e.touches ? e.touches[0].pageY : e.pageY;
             // FIX: Corrected scroll direction and increased sensitivity
             const deltaY = y - startY;
-            container.scrollTop = startScrollTop - deltaY * 13;
+            container.scrollTop = startScrollTop +deltaY * 13;
             updateActiveDragTitle();
         });
     };
